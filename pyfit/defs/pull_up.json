@@ -1,0 +1,17 @@
+{
+    "name": "Pull Up",
+    "parameters" : {
+        "grip" : {
+            "type": "categorical",
+            "values":["wide", "narrow", "neutral"]
+        },
+        "style" : {
+            "type": "categorical",
+            "values": ["explosive", "slow"]
+        },
+        "device" : {
+            "type": "categorical",
+            "values":["bar", "rings"]
+        }
+    }
+}
