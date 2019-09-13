@@ -13,6 +13,19 @@ from jinja2 import Template
 from pyfit.app import App
 
 
+import socket
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
 
 Base = declarative_base()
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -38,9 +51,12 @@ def run():
           'tools.staticdir.dir': os.path.join(MOD_DIR,'css')
         },
     }
+
+    ip = get_ip()
+    print("ip",get_ip())
     cherrypy.config.update({'engine.autoreload.on' : auto_reload})
     cherrypy.tree.mount(App(os.path.join(MOD_DIR, "defs")), '/', config=app_config)
-    #cherrypy.config.update({'server.socket_host': '192.168.0.27'})
+    cherrypy.config.update({'server.socket_host': '0:0:0:0:0:0:0:0'})
     dbfile = os.path.join(MOD_DIR, 'log.db')
 
     if not os.path.exists(dbfile):
@@ -54,7 +70,7 @@ def run():
     sqlalchemy_plugin.create()
     cherrypy.engine.start()
     import webbrowser
-    webbrowser.open('http://localhost:8080')
+    webbrowser.open('http://{}:8080'.format(ip))
     cherrypy.engine.block()
 
 
